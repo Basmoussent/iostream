@@ -2,7 +2,10 @@ module github.com/Basmoussent/iostream
 
 go 1.23.4
 
-require github.com/danielpaulus/quicktime_video_hack v0.0.0-20230504104950-d81396e2e775
+require (
+	github.com/danielpaulus/quicktime_video_hack v0.0.0-20230504104950-d81396e2e775
+	github.com/webview/webview_go v0.0.0-20240831120633-6173450d4dd6
+)
 
 require (
 	github.com/google/gousb v2.1.0+incompatible // indirect

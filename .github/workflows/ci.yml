@@ -22,36 +22,42 @@ jobs:
             echo "$unformatted"
             exit 1
           fi
-      - name: go vet
+      - name: go vet (CLI only — GUI is cgo-only)
         env:
           CGO_ENABLED: "0"
-        run: go vet ./...
+        run: go vet ./cmd/iostream/... ./internal/...
       - name: go build (stub)
         env:
           CGO_ENABLED: "0"
-        run: go build ./...
+        run: go build ./cmd/iostream/...
 
   build-linux:
-    name: build linux (cgo + libusb)
+    name: build linux (cgo + libusb + GUI)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.23"
-      - name: install libusb
-        run: sudo apt-get update && sudo apt-get install -y libusb-1.0-0-dev
-      - name: build
+      - name: install libusb + webkit2gtk
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libusb-1.0-0-dev libwebkit2gtk-4.0-dev
+      - name: build CLI
         env:
           CGO_ENABLED: "1"
         run: go build -o bin/iostream-linux ./cmd/iostream
+      - name: build GUI
+        env:
+          CGO_ENABLED: "1"
+        run: go build -o bin/iostream-gui-linux ./cmd/iostream-gui
       - uses: actions/upload-artifact@v4
         with:
           name: iostream-linux
-          path: bin/iostream-linux
+          path: bin/
 
   build-windows:
-    name: build windows (cgo + libusb)
+    name: build windows (cgo + libusb + GUI)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -67,12 +73,17 @@ jobs:
           echo "CGO_CFLAGS=-I$libusbDir\include\libusb-1.0" >> $env:GITHUB_ENV
           echo "CGO_LDFLAGS=-L$libusbDir\lib -lusb-1.0" >> $env:GITHUB_ENV
           echo "$libusbDir\bin" >> $env:GITHUB_PATH
-      - name: build
+      - name: build CLI
         env:
           CGO_ENABLED: "1"
         shell: pwsh
         run: go build -o bin\iostream.exe .\cmd\iostream
-      - name: bundle libusb DLL alongside binary
+      - name: build GUI
+        env:
+          CGO_ENABLED: "1"
+        shell: pwsh
+        run: go build -ldflags "-H windowsgui" -o bin\iostream-gui.exe .\cmd\iostream-gui
+      - name: bundle libusb DLL alongside binaries
         shell: pwsh
         run: Copy-Item "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\libusb-1.0.dll" -Destination bin\
       - uses: actions/upload-artifact@v4

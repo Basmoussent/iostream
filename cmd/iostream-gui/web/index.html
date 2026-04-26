@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>iostream</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>iostream</h1>
+      <p class="subtitle">Mirror your iPhone over USB.</p>
+    </header>
+
+    <main>
+      <section class="card" id="setup-card">
+        <h2>1. WinUSB driver</h2>
+        <p>One-time install so libusb can talk to your iPhone.</p>
+        <button id="setup-btn">Install / repair driver</button>
+        <p class="status" id="setup-status"></p>
+      </section>
+
+      <section class="card" id="devices-card">
+        <h2>2. Devices</h2>
+        <button id="refresh-btn">Refresh</button>
+        <table id="devices-table">
+          <thead>
+            <tr><th>UDID</th><th>Product</th><th>USB</th><th>QT</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p class="status" id="devices-status"></p>
+      </section>
+
+      <section class="card" id="stream-card">
+        <h2>3. Mirror</h2>
+        <p>Launches <code>ffplay</code> in a separate window — must be on PATH.</p>
+        <label>UDID (blank = first device): <input id="stream-udid" /></label>
+        <button id="stream-btn">Start mirroring</button>
+        <p class="status" id="stream-status"></p>
+      </section>
+    </main>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

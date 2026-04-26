@@ -1,6 +1,12 @@
 # Build output
 /bin/
 /dist/
+/iostream
+/iostream-gui
+/iostream-linux
+/iostream-gui-linux
+/iostream-darwin
+/iostream-gui-darwin
 *.exe
 *.test
 *.out
