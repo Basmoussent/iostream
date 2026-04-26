@@ -1,6 +1,6 @@
 # Credits
 
-iphone-mirror builds on years of community work to reverse-engineer Apple's
+iostream builds on years of community work to reverse-engineer Apple's
 iOS USB and AirPlay protocols. Every section below is something we depend on,
 were inspired by, or used to learn the protocol from.
 

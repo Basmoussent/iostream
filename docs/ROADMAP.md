@@ -19,14 +19,14 @@ Tick boxes are updated as code lands.
 - [x] Read product strings (via QVH's `IosDevice.ProductName`)
 - [x] Document the Zadig driver swap in [`WINDOWS.md`](WINDOWS.md)
 
-**Done when:** `iphone-mirror devices` prints a real iPhone on Windows.
+**Done when:** `iostream devices` prints a real iPhone on Windows.
 
 ## M2 — QuickTime configuration swap ✅
 
 - [x] Send the control transfer that flips the device into the hidden
       "QuickTime" USB configuration (see [`PROTOCOL.md`](PROTOCOL.md))
 - [x] Detect the reset/re-enumeration and re-open the device on its new config
-- [x] `iphone-mirror activate [--udid X]` and `deactivate [--udid X]`
+- [x] `iostream activate [--udid X]` and `deactivate [--udid X]`
 
 **Done when:** the recording dot appears in the iPhone's status bar.
 
@@ -35,17 +35,17 @@ Tick boxes are updated as code lands.
 - [x] Implement the QuickTime sync packet handshake (`PING`, `SYNC`, `CWPA`, `AFMT`, `CVRP`)
 - [x] Bulk-read the H.264 + AAC stream from the QuickTime endpoint
 - [x] Strip Apple framing and emit clean Annex-B NAL units
-- [x] `iphone-mirror stream` writes the H.264 elementary stream to stdout, with
+- [x] `iostream stream` writes the H.264 elementary stream to stdout, with
       `--audio` for an optional PCM track and SIGINT-driven clean shutdown
 
 ## M4 — Built-in player
 
-- [ ] Embed a video sink so `iphone-mirror play` works without an external
+- [ ] Embed a video sink so `iostream play` works without an external
       player. Candidates: libmpv, GStreamer, Wails + `<video>` MSE.
 - [ ] Decide on the UI shell (likely Wails — webview2 ships on Win10/11)
 - [ ] Audio playback via WASAPI
 
-**Done when:** double-clicking `iphone-mirror.exe` shows the iPhone.
+**Done when:** double-clicking `iostream.exe` shows the iPhone.
 
 ## M5 — Wi-Fi / AirPlay
 

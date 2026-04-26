@@ -1,10 +1,10 @@
-// iphone-mirror mirrors an iPhone screen to a Windows host over USB or Wi-Fi.
+// iostream mirrors an iPhone screen to a Windows host over USB or Wi-Fi.
 package main
 
 import (
 	"os"
 
-	"github.com/0xBasmoussent/iphone-mirror/internal/cli"
+	"github.com/Basmoussent/iostream/internal/cli"
 )
 
 // version is overridden at build time via -ldflags.

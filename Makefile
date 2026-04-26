@@ -1,4 +1,4 @@
-BINARY      := iphone-mirror
+BINARY      := iostream
 PKG         := ./cmd/$(BINARY)
 BIN_DIR     := bin
 VERSION     ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)

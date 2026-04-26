@@ -44,11 +44,11 @@ jobs:
       - name: build
         env:
           CGO_ENABLED: "1"
-        run: go build -o bin/iphone-mirror-linux ./cmd/iphone-mirror
+        run: go build -o bin/iostream-linux ./cmd/iostream
       - uses: actions/upload-artifact@v4
         with:
-          name: iphone-mirror-linux
-          path: bin/iphone-mirror-linux
+          name: iostream-linux
+          path: bin/iostream-linux
 
   build-windows:
     name: build windows (cgo + libusb)
@@ -71,11 +71,11 @@ jobs:
         env:
           CGO_ENABLED: "1"
         shell: pwsh
-        run: go build -o bin\iphone-mirror.exe .\cmd\iphone-mirror
+        run: go build -o bin\iostream.exe .\cmd\iostream
       - name: bundle libusb DLL alongside binary
         shell: pwsh
         run: Copy-Item "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\libusb-1.0.dll" -Destination bin\
       - uses: actions/upload-artifact@v4
         with:
-          name: iphone-mirror-windows
+          name: iostream-windows
           path: bin\

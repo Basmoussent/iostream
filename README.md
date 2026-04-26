@@ -1,4 +1,4 @@
-# iphone-mirror
+# iostream
 
 Mirror an iPhone screen to Windows over USB or Wi-Fi, in the highest quality the device can produce.
 
@@ -27,17 +27,17 @@ USB uses Apple's hidden "QuickTime" USB configuration — the same mechanism Qui
 # See docs/WINDOWS.md for screenshots.
 
 # List connected iPhones
-iphone-mirror devices
+iostream devices
 
 # Pipe the raw H.264 to ffplay / mpv for absolute minimum latency
-iphone-mirror stream | ffplay -fflags nobuffer -flags low_delay -framedrop -
+iostream stream | ffplay -fflags nobuffer -flags low_delay -framedrop -
 
 # Or save a recording to disk (no re-encoding — just the device's native H.264)
-iphone-mirror stream -o recording.h264
+iostream stream -o recording.h264
 
 # Manage the QuickTime USB configuration explicitly (stream auto-activates)
-iphone-mirror activate
-iphone-mirror deactivate
+iostream activate
+iostream deactivate
 ```
 
 ## Building from source
@@ -62,14 +62,14 @@ make linux-cgo darwin-cgo
 ```
 
 On Windows, install libusb via [vcpkg](https://vcpkg.io/) (`vcpkg install libusb:x64-windows`)
-or grab the prebuilt `iphone-mirror-windows` artifact from CI. The CI workflow
+or grab the prebuilt `iostream-windows` artifact from CI. The CI workflow
 in `.github/workflows/ci.yml` is the canonical reference for how to set up
 `PKG_CONFIG_PATH` and `CGO_LDFLAGS` for a Windows cgo build.
 
 ## Repository layout
 
 ```
-cmd/iphone-mirror/    Entry point
+cmd/iostream/    Entry point
 internal/cli/         Subcommand wiring
 internal/usb/         USB device discovery and QuickTime protocol (planned)
 internal/airplay/     AirPlay receiver (planned)

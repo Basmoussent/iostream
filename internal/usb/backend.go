@@ -55,7 +55,7 @@ type Backend interface {
 //
 // Either Video or Audio may be nil to suppress that track. AutoActivate runs
 // Activate(udid) before reading from the stream; the CLI uses it so that the
-// happy path is `iphone-mirror stream | ffplay -` with nothing else to set up.
+// happy path is `iostream stream | ffplay -` with nothing else to set up.
 type StreamOptions struct {
 	Video        io.Writer
 	Audio        io.Writer

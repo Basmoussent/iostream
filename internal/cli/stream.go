@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/0xBasmoussent/iphone-mirror/internal/usb"
+	"github.com/Basmoussent/iostream/internal/usb"
 )
 
 type streamCmd struct{}
@@ -27,7 +27,7 @@ func (streamCmd) Run(args []string, env Env) int {
 
 	video, closeVideo, err := openOutput(*output, env.Stdout)
 	if err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	defer closeVideo()
@@ -37,7 +37,7 @@ func (streamCmd) Run(args []string, env Env) int {
 	if *audioPath != "" {
 		audio, closeAudio, err = openOutput(*audioPath, env.Stdout)
 		if err != nil {
-			fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+			fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 			return 1
 		}
 		defer closeAudio()
@@ -52,7 +52,7 @@ func (streamCmd) Run(args []string, env Env) int {
 	}()
 	defer signal.Stop(sigs)
 
-	fmt.Fprintln(env.Stderr, "iphone-mirror: streaming — Ctrl-C to stop.")
+	fmt.Fprintln(env.Stderr, "iostream: streaming — Ctrl-C to stop.")
 
 	err = usb.NewBackend().Stream(*udid, usb.StreamOptions{
 		Video:        video,
@@ -61,7 +61,7 @@ func (streamCmd) Run(args []string, env Env) int {
 		AutoActivate: !*noActivate,
 	})
 	if err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	return 0

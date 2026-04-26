@@ -1,4 +1,4 @@
-// Package cli wires subcommands together for the iphone-mirror binary.
+// Package cli wires subcommands together for the iostream binary.
 //
 // Each subcommand is a small struct with a Name, Summary, and Run method so
 // that adding one is a matter of registering it in commands().
@@ -52,16 +52,16 @@ func Run(argv []string, env Env) int {
 		}
 	}
 
-	fmt.Fprintf(env.Stderr, "iphone-mirror: unknown command %q\n\n", name)
+	fmt.Fprintf(env.Stderr, "iostream: unknown command %q\n\n", name)
 	printRootHelp(env.Stderr)
 	return 2
 }
 
 func printRootHelp(w io.Writer) {
-	fmt.Fprintln(w, "iphone-mirror — mirror an iPhone screen to a Windows host.")
+	fmt.Fprintln(w, "iostream — mirror an iPhone screen to a Windows host.")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Usage:")
-	fmt.Fprintln(w, "  iphone-mirror <command> [flags]")
+	fmt.Fprintln(w, "  iostream <command> [flags]")
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Commands:")
 
@@ -72,7 +72,7 @@ func printRootHelp(w io.Writer) {
 	}
 
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Run 'iphone-mirror <command> -h' for command-specific flags.")
+	fmt.Fprintln(w, "Run 'iostream <command> -h' for command-specific flags.")
 }
 
 // newFlagSet builds a FlagSet that prints its usage to env.Stderr so that

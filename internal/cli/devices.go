@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"text/tabwriter"
 
-	"github.com/0xBasmoussent/iphone-mirror/internal/usb"
+	"github.com/Basmoussent/iostream/internal/usb"
 )
 
 type devicesCmd struct{}
@@ -22,7 +22,7 @@ func (devicesCmd) Run(args []string, env Env) int {
 
 	devs, err := usb.NewBackend().Discover()
 	if err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 
@@ -39,7 +39,7 @@ func renderDevicesJSON(env Env, devs []usb.Device) int {
 		devs = []usb.Device{}
 	}
 	if err := enc.Encode(devs); err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	return 0
@@ -57,7 +57,7 @@ func renderDevicesTable(env Env, devs []usb.Device) int {
 			d.UDID, d.ProductName, d.USBInfo, d.QuickTimeEnabled)
 	}
 	if err := tw.Flush(); err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	return 0

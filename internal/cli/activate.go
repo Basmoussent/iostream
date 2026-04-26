@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/0xBasmoussent/iphone-mirror/internal/usb"
+	"github.com/Basmoussent/iostream/internal/usb"
 )
 
 type activateCmd struct{}
@@ -21,7 +21,7 @@ func (activateCmd) Run(args []string, env Env) int {
 	}
 
 	if err := usb.NewBackend().Activate(*udid); err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	fmt.Fprintln(env.Stdout, "QuickTime configuration activated.")
@@ -41,7 +41,7 @@ func (deactivateCmd) Run(args []string, env Env) int {
 	}
 
 	if err := usb.NewBackend().Deactivate(*udid); err != nil {
-		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
+		fmt.Fprintf(env.Stderr, "iostream: %v\n", err)
 		return 1
 	}
 	fmt.Fprintln(env.Stdout, "QuickTime configuration deactivated.")

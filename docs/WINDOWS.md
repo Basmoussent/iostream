@@ -1,6 +1,6 @@
 # Windows setup
 
-iphone-mirror talks to the iPhone over raw USB through libusb. Windows ships
+iostream talks to the iPhone over raw USB through libusb. Windows ships
 without a generic USB driver, so the iPhone needs to be re-bound to **WinUSB**
 once. After that it stays put — you only redo this if you reset the device
 manager.
@@ -42,7 +42,7 @@ In the right-hand dropdown, choose **WinUSB** and click **Replace Driver** (or
 ## 5. Verify
 
 ```powershell
-iphone-mirror devices
+iostream devices
 ```
 
 Once the libusb backend lands, this should print a line for the connected

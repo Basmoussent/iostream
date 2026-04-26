@@ -1,4 +1,4 @@
-module github.com/0xBasmoussent/iphone-mirror
+module github.com/Basmoussent/iostream
 
 go 1.23.4
 
