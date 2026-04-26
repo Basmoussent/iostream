@@ -2,7 +2,6 @@ package cli
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"text/tabwriter"
 
@@ -21,11 +20,7 @@ func (devicesCmd) Run(args []string, env Env) int {
 		return 2
 	}
 
-	devs, err := usb.NewDiscoverer().Discover()
-	if errors.Is(err, usb.ErrBackendUnavailable) {
-		fmt.Fprintln(env.Stderr, "iphone-mirror: device discovery not yet wired up — see docs/ROADMAP.md")
-		return 1
-	}
+	devs, err := usb.NewBackend().Discover()
 	if err != nil {
 		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
 		return 1
