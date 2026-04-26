@@ -31,6 +31,7 @@ func commands() []Command {
 		&activateCmd{},
 		&deactivateCmd{},
 		&streamCmd{},
+		&setupDriverCmd{},
 		&versionCmd{},
 	}
 }
