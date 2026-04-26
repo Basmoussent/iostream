@@ -40,12 +40,26 @@ Tick boxes are updated as code lands.
 
 ## M4 — Built-in player
 
-- [ ] Embed a video sink so `iostream play` works without an external
-      player. Candidates: libmpv, GStreamer, Wails + `<video>` MSE.
-- [ ] Decide on the UI shell (likely Wails — webview2 ships on Win10/11)
-- [ ] Audio playback via WASAPI
+### M4a — GUI shell ✅
 
-**Done when:** double-clicking `iostream.exe` shows the iPhone.
+- [x] WebView-based GUI (`iostream-gui`) using `webview_go`; embedded
+      vanilla HTML/CSS/JS — no Node toolchain
+- [x] Three-card UI: driver install, device list, start mirroring
+- [x] Auto-downloads Zadig and launches it elevated for the driver step
+      (`iostream setup-driver` exposes the same flow on the CLI)
+- [x] Stream button spawns `iostream stream | ffplay -` so the user gets a
+      working window immediately
+
+### M4b — Embedded decoder
+
+- [ ] Stream the H.264 NAL units to the webview over a localhost endpoint
+      and decode in-page via WebCodecs (Chromium-only — fine, WebView2 is
+      Chromium)
+- [ ] Audio playback via the Web Audio API or WASAPI passthrough
+- [ ] Replace the ffplay subprocess so the mirror lives inside the GUI
+
+**Done when:** double-clicking `iostream-gui.exe` shows the iPhone in-window
+with no external player required.
 
 ## M5 — Wi-Fi / AirPlay
 
@@ -57,7 +71,11 @@ Tick boxes are updated as code lands.
 
 ## M6 — Polish
 
-- [ ] Code signing for the Windows binary
+- [ ] Code signing for the Windows binaries
 - [ ] Auto-update channel
 - [ ] Recording to MP4 (mux H.264 + AAC, no re-encode)
 - [ ] Per-device profiles (orientation lock, audio routing)
+- [ ] True zero-click driver install via `libwdi` cgo binding (skips the
+      one Replace-Driver click in Zadig that `setup-driver` still requires)
+- [ ] Pin Zadig SHA-256 in `internal/driver/driver_windows.go` so the
+      download is verified before launch

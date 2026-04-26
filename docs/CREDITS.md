@@ -14,6 +14,12 @@ were inspired by, or used to learn the protocol from.
 - **github.com/google/gousb** — Apache-2.0 (transitive, via QVH)
   Cgo bindings around libusb-1.0.
 - **libusb-1.0** — LGPL-2.1 (system library, dynamically linked on cgo builds)
+- **github.com/webview/webview_go** — MIT
+  Cgo bindings around the platform webview (WebView2 on Windows, WebKit2GTK
+  on Linux, WebKit on macOS). Powers `iostream-gui` without a Node toolchain.
+- **Zadig** — GPL-3.0
+  Downloaded on demand by `iostream setup-driver` to perform the WinUSB
+  driver swap. Not redistributed; fetched from the official release.
 
 ## Inspiration / reference implementations
 

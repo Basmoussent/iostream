@@ -2,7 +2,7 @@
 
 Mirror an iPhone screen to Windows over USB or Wi-Fi, in the highest quality the device can produce.
 
-> **Status:** USB pipeline (M1–M3) is wired up — `devices`, `activate`, `deactivate`, and `stream` work. The built-in player (M4) and AirPlay receiver (M5) are next. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status:** USB pipeline (M1–M3) is wired up — `devices`, `activate`, `deactivate`, `stream`, and `setup-driver` work. A small WebView GUI (`iostream-gui`) ships alongside. AirPlay (M5) and an embedded decoder (M4 v2) are next. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Goals
 
@@ -20,11 +20,21 @@ Mirror an iPhone screen to Windows over USB or Wi-Fi, in the highest quality the
 
 USB uses Apple's hidden "QuickTime" USB configuration — the same mechanism QuickTime on macOS uses when you plug in an iPhone and pick it as a camera source. Wi-Fi uses a reverse-engineered AirPlay 2 mirroring receiver.
 
-## Quick start (USB)
+## Quick start
+
+### GUI (recommended)
+
+Double-click `iostream-gui.exe`. Three cards:
+
+1. **Install / repair driver** — auto-downloads Zadig and elevates it. One click in Zadig (`WinUSB → Replace Driver`) and you're done forever.
+2. **Devices** — refreshes the connected iPhone list.
+3. **Start mirroring** — launches `ffplay` in a separate window with the live stream. `ffplay` must be on `PATH` (`winget install Gyan.FFmpeg`).
+
+### CLI
 
 ```powershell
-# One-time: swap the iPhone USB driver to WinUSB using Zadig.
-# See docs/WINDOWS.md for screenshots.
+# One-time WinUSB driver install — opens Zadig with admin elevation.
+iostream setup-driver
 
 # List connected iPhones
 iostream devices
@@ -69,11 +79,12 @@ in `.github/workflows/ci.yml` is the canonical reference for how to set up
 ## Repository layout
 
 ```
-cmd/iostream/    Entry point
+cmd/iostream/         CLI entry point
+cmd/iostream-gui/     WebView GUI (cgo)
 internal/cli/         Subcommand wiring
-internal/usb/         USB device discovery and QuickTime protocol (planned)
+internal/usb/         USB device discovery + QuickTime protocol (cgo + libusb)
+internal/driver/      Zadig auto-installer for the WinUSB driver swap
 internal/airplay/     AirPlay receiver (planned)
-internal/decoder/     H.264 NAL handling (planned)
 docs/                 Protocol notes, Windows setup, roadmap
 ```
 
