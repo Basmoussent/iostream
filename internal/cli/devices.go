@@ -51,25 +51,14 @@ func renderDevicesTable(env Env, devs []usb.Device) int {
 		return 0
 	}
 	tw := tabwriter.NewWriter(env.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(tw, "UDID\tPRODUCT\tSERIAL\tBUS\tADDR\tQT")
+	fmt.Fprintln(tw, "UDID\tPRODUCT\tUSB\tQT")
 	for _, d := range devs {
-		fmt.Fprintf(tw, "%s\t%s\t%s\t%d\t%d\t%t\n",
-			truncate(d.UDID, 12), d.Product, d.SerialNumber, d.BusNumber, d.DeviceAddress, d.QuickTimeEnabled)
+		fmt.Fprintf(tw, "%s\t%s\t%s\t%t\n",
+			d.UDID, d.ProductName, d.USBInfo, d.QuickTimeEnabled)
 	}
 	if err := tw.Flush(); err != nil {
 		fmt.Fprintf(env.Stderr, "iphone-mirror: %v\n", err)
 		return 1
 	}
 	return 0
-}
-
-// truncate shortens a string to n runes, appending an ellipsis when it had to cut.
-func truncate(s string, n int) string {
-	if len(s) <= n {
-		return s
-	}
-	if n <= 1 {
-		return s[:n]
-	}
-	return s[:n-1] + "…"
 }

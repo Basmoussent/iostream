@@ -1,27 +1,21 @@
 // Package usb describes iOS devices reachable over USB and the contract that
-// any platform-specific discovery backend must satisfy.
+// any platform-specific backend must satisfy.
 //
-// The actual libusb-backed implementation lives in a sibling file (added in a
-// later milestone). Keeping the types and interface in their own file means
-// the rest of the codebase can depend on stable shapes today.
+// See backend.go for the Backend interface and the cgo / non-cgo split.
 package usb
 
 // Device is one connected iOS device as seen from the host's USB stack.
 //
-// UDID is empty until the device has been queried via lockdownd (planned).
+// UDID is the device's USB serial number — for older iPhones it is the full
+// 40-character UDID, for newer ones it is a 24-character prefix that uniquely
+// identifies the device on this host.
+//
 // QuickTimeEnabled reports whether the hidden QuickTime USB configuration is
-// currently active — when true the device is exposing the H.264 video stream
-// and we can start consuming it.
+// currently active. When true the H.264 video stream is exposed and Stream()
+// can be called without activating first.
 type Device struct {
 	UDID             string `json:"udid"`
-	Product          string `json:"product"`
-	SerialNumber     string `json:"serial_number"`
-	BusNumber        int    `json:"bus_number"`
-	DeviceAddress    int    `json:"device_address"`
+	ProductName      string `json:"product_name"`
+	USBInfo          string `json:"usb_info"`
 	QuickTimeEnabled bool   `json:"quicktime_enabled"`
-}
-
-// Discoverer enumerates iOS devices currently attached over USB.
-type Discoverer interface {
-	Discover() ([]Device, error)
 }
