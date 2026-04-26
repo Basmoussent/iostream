@@ -32,61 +32,66 @@ jobs:
         run: go build ./cmd/iostream/...
 
   build-linux:
-    name: build linux (cgo + libusb + GUI)
+    name: build linux CLI (cgo + libusb)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.23"
-      - name: install libusb + webkit2gtk
+      - name: install libusb
         run: |
           sudo apt-get update
-          sudo apt-get install -y libusb-1.0-0-dev libwebkit2gtk-4.0-dev
+          sudo apt-get install -y libusb-1.0-0-dev
       - name: build CLI
         env:
           CGO_ENABLED: "1"
         run: go build -o bin/iostream-linux ./cmd/iostream
-      - name: build GUI
-        env:
-          CGO_ENABLED: "1"
-        run: go build -o bin/iostream-gui-linux ./cmd/iostream-gui
       - uses: actions/upload-artifact@v4
         with:
           name: iostream-linux
-          path: bin/
+          path: bin/iostream-linux
 
   build-windows:
-    name: build windows (cgo + libusb + GUI)
+    name: build windows CLI (cgo + libusb)
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: "1.23"
-      - name: install libusb via vcpkg
-        shell: pwsh
+      # MSYS2 ships a mingw-w64 libusb that matches the Go runtime's mingw cgo
+      # toolchain on windows-latest. vcpkg's MSVC libusb does not — the link
+      # step would fail with `cannot find -lusb-1.0`.
+      - name: install msys2 + mingw libusb
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-libusb
+            mingw-w64-x86_64-pkg-config
+      - name: prepare cgo env
         run: |
-          vcpkg install libusb:x64-windows
-          $libusbDir = "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows"
-          echo "PKG_CONFIG_PATH=$libusbDir\lib\pkgconfig" >> $env:GITHUB_ENV
-          echo "CGO_CFLAGS=-I$libusbDir\include\libusb-1.0" >> $env:GITHUB_ENV
-          echo "CGO_LDFLAGS=-L$libusbDir\lib -lusb-1.0" >> $env:GITHUB_ENV
-          echo "$libusbDir\bin" >> $env:GITHUB_PATH
+          echo "PATH=/mingw64/bin:$PATH" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=/mingw64/lib/pkgconfig" >> $GITHUB_ENV
+          echo "CC=x86_64-w64-mingw32-gcc" >> $GITHUB_ENV
+          echo "CXX=x86_64-w64-mingw32-g++" >> $GITHUB_ENV
       - name: build CLI
         env:
           CGO_ENABLED: "1"
-        shell: pwsh
-        run: go build -o bin\iostream.exe .\cmd\iostream
-      - name: build GUI
-        env:
-          CGO_ENABLED: "1"
-        shell: pwsh
-        run: go build -ldflags "-H windowsgui" -o bin\iostream-gui.exe .\cmd\iostream-gui
-      - name: bundle libusb DLL alongside binaries
-        shell: pwsh
-        run: Copy-Item "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\libusb-1.0.dll" -Destination bin\
+        run: go build -o bin/iostream.exe ./cmd/iostream
+      - name: bundle libusb-1.0.dll
+        run: cp /mingw64/bin/libusb-1.0.dll bin/
       - uses: actions/upload-artifact@v4
         with:
           name: iostream-windows
-          path: bin\
+          path: bin/
+
+  # GUI build is intentionally not in CI right now: webview_go pins to
+  # webkit2gtk-4.0 (gone from Ubuntu 24.04) and emits a `-mthreads` linker
+  # flag that mingw-w64 14+ rejects. Both are tracked under ROADMAP M6 — the
+  # plan is to vendor and patch webview_go before re-enabling CI builds.

@@ -79,3 +79,6 @@ with no external player required.
       one Replace-Driver click in Zadig that `setup-driver` still requires)
 - [ ] Pin Zadig SHA-256 in `internal/driver/driver_windows.go` so the
       download is verified before launch
+- [ ] Vendor and patch `webview_go` so the GUI builds on CI: upstream pins
+      to `webkit2gtk-4.0` (gone from Ubuntu 24.04) and emits `-mthreads`
+      which mingw-w64 14+ rejects

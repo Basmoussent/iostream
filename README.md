@@ -22,7 +22,9 @@ USB uses Apple's hidden "QuickTime" USB configuration — the same mechanism Qui
 
 ## Quick start
 
-### GUI (recommended)
+### GUI
+
+> **Note:** the GUI is not built in CI right now (webview_go vs Ubuntu 24.04 + mingw 14+ — see ROADMAP M6). To get `iostream-gui.exe` you currently need to build it locally on Windows: `make gui` from an MSYS2 MINGW64 shell with `mingw-w64-x86_64-toolchain mingw-w64-x86_64-libusb` installed.
 
 Double-click `iostream-gui.exe`. Three cards:
 
