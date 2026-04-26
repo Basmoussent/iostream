@@ -10,34 +10,33 @@ Tick boxes are updated as code lands.
 - [x] CLI dispatcher with `version` and `devices` subcommands
 - [x] `internal/usb.Discoverer` interface and stub backend
 
-## M1 — Real USB device discovery
+## M1 — Real USB device discovery ✅
 
-- [ ] Add `gousb` (libusb) dependency, gated behind a `usb_libusb` build tag
-- [ ] Implement `libusbDiscoverer` that walks attached devices and filters by
-      Apple's vendor ID (`0x05ac`)
-- [ ] Detect whether the QuickTime USB configuration is currently active
-- [ ] Read product strings (USB string descriptor `iProduct`)
-- [ ] Document the Zadig driver swap in [`WINDOWS.md`](WINDOWS.md)
+- [x] Add `quicktime_video_hack` (and its `gousb`/libusb dependency) behind a
+      `cgo` build tag, with a no-op stub on `!cgo` for portability
+- [x] `libusbBackend.Discover()` walks attached Apple devices and reports
+      whether the QuickTime USB configuration is currently active
+- [x] Read product strings (via QVH's `IosDevice.ProductName`)
+- [x] Document the Zadig driver swap in [`WINDOWS.md`](WINDOWS.md)
 
 **Done when:** `iphone-mirror devices` prints a real iPhone on Windows.
 
-## M2 — QuickTime configuration swap
+## M2 — QuickTime configuration swap ✅
 
-- [ ] Send the magic control transfer that flips the device into the hidden
+- [x] Send the control transfer that flips the device into the hidden
       "QuickTime" USB configuration (see [`PROTOCOL.md`](PROTOCOL.md))
-- [ ] Detect the reset/re-enumeration and re-open the device on its new config
-- [ ] Add `iphone-mirror activate <udid>` and `deactivate <udid>` commands
+- [x] Detect the reset/re-enumeration and re-open the device on its new config
+- [x] `iphone-mirror activate [--udid X]` and `deactivate [--udid X]`
 
 **Done when:** the recording dot appears in the iPhone's status bar.
 
-## M3 — Stream consumption
+## M3 — Stream consumption ✅
 
-- [ ] Implement the QuickTime sync packet handshake (`PING`, `SYNC`, `CWPA`, `AFMT`, `CVRP`)
-- [ ] Bulk-read the H.264 + AAC stream from the QuickTime endpoint
-- [ ] Strip Apple framing and emit clean Annex-B NAL units
-- [ ] `iphone-mirror stream` writes the H.264 elementary stream to stdout
-
-**Done when:** `iphone-mirror stream | ffplay -` shows a live picture.
+- [x] Implement the QuickTime sync packet handshake (`PING`, `SYNC`, `CWPA`, `AFMT`, `CVRP`)
+- [x] Bulk-read the H.264 + AAC stream from the QuickTime endpoint
+- [x] Strip Apple framing and emit clean Annex-B NAL units
+- [x] `iphone-mirror stream` writes the H.264 elementary stream to stdout, with
+      `--audio` for an optional PCM track and SIGINT-driven clean shutdown
 
 ## M4 — Built-in player
 

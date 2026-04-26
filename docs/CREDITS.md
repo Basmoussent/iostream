@@ -6,9 +6,14 @@ were inspired by, or used to learn the protocol from.
 
 ## Direct dependencies
 
-_None yet — the project is pure stdlib at M0._
-
-When dependencies are added their licenses will be enumerated here.
+- **github.com/danielpaulus/quicktime_video_hack** — MIT
+  Powers the entire USB pipeline (M1–M3): device discovery, QuickTime config
+  activation, the message processor, and `coremedia.AVFileWriter` which
+  emits H.264 in Annex-B framing. This dependency is what makes the project
+  feasible without months of solo reverse engineering.
+- **github.com/google/gousb** — Apache-2.0 (transitive, via QVH)
+  Cgo bindings around libusb-1.0.
+- **libusb-1.0** — LGPL-2.1 (system library, dynamically linked on cgo builds)
 
 ## Inspiration / reference implementations
 

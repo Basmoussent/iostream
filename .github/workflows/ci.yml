@@ -1,0 +1,81 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    name: vet + gofmt (no cgo)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "::error::gofmt would reformat:"
+            echo "$unformatted"
+            exit 1
+          fi
+      - name: go vet
+        env:
+          CGO_ENABLED: "0"
+        run: go vet ./...
+      - name: go build (stub)
+        env:
+          CGO_ENABLED: "0"
+        run: go build ./...
+
+  build-linux:
+    name: build linux (cgo + libusb)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: install libusb
+        run: sudo apt-get update && sudo apt-get install -y libusb-1.0-0-dev
+      - name: build
+        env:
+          CGO_ENABLED: "1"
+        run: go build -o bin/iphone-mirror-linux ./cmd/iphone-mirror
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iphone-mirror-linux
+          path: bin/iphone-mirror-linux
+
+  build-windows:
+    name: build windows (cgo + libusb)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: install libusb via vcpkg
+        shell: pwsh
+        run: |
+          vcpkg install libusb:x64-windows
+          $libusbDir = "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows"
+          echo "PKG_CONFIG_PATH=$libusbDir\lib\pkgconfig" >> $env:GITHUB_ENV
+          echo "CGO_CFLAGS=-I$libusbDir\include\libusb-1.0" >> $env:GITHUB_ENV
+          echo "CGO_LDFLAGS=-L$libusbDir\lib -lusb-1.0" >> $env:GITHUB_ENV
+          echo "$libusbDir\bin" >> $env:GITHUB_PATH
+      - name: build
+        env:
+          CGO_ENABLED: "1"
+        shell: pwsh
+        run: go build -o bin\iphone-mirror.exe .\cmd\iphone-mirror
+      - name: bundle libusb DLL alongside binary
+        shell: pwsh
+        run: Copy-Item "$env:VCPKG_INSTALLATION_ROOT\installed\x64-windows\bin\libusb-1.0.dll" -Destination bin\
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iphone-mirror-windows
+          path: bin\

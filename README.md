@@ -2,7 +2,7 @@
 
 Mirror an iPhone screen to Windows over USB or Wi-Fi, in the highest quality the device can produce.
 
-> **Status:** early development. The CLI scaffold and device discovery work; the QuickTime stream pipeline is being built. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status:** USB pipeline (M1–M3) is wired up — `devices`, `activate`, `deactivate`, and `stream` work. The built-in player (M4) and AirPlay receiver (M5) are next. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Goals
 
@@ -20,7 +20,7 @@ Mirror an iPhone screen to Windows over USB or Wi-Fi, in the highest quality the
 
 USB uses Apple's hidden "QuickTime" USB configuration — the same mechanism QuickTime on macOS uses when you plug in an iPhone and pick it as a camera source. Wi-Fi uses a reverse-engineered AirPlay 2 mirroring receiver.
 
-## Quick start (USB, when ready)
+## Quick start (USB)
 
 ```powershell
 # One-time: swap the iPhone USB driver to WinUSB using Zadig.
@@ -29,26 +29,42 @@ USB uses Apple's hidden "QuickTime" USB configuration — the same mechanism Qui
 # List connected iPhones
 iphone-mirror devices
 
-# Stream to a built-in window
-iphone-mirror play
-
-# Or pipe the raw H.264 to ffplay / mpv for absolute minimum latency
+# Pipe the raw H.264 to ffplay / mpv for absolute minimum latency
 iphone-mirror stream | ffplay -fflags nobuffer -flags low_delay -framedrop -
+
+# Or save a recording to disk (no re-encoding — just the device's native H.264)
+iphone-mirror stream -o recording.h264
+
+# Manage the QuickTime USB configuration explicitly (stream auto-activates)
+iphone-mirror activate
+iphone-mirror deactivate
 ```
 
 ## Building from source
 
-Requires Go 1.23+.
+Requires Go 1.23+. The libusb backend is gated behind `CGO_ENABLED=1` so the
+default build is pure Go and works everywhere — useful for CI and for reading
+the source. To actually talk to a phone you need a cgo build with libusb.
 
 ```sh
-# From WSL or Linux, cross-compile a Windows binary:
-make windows
-
-# Native build for whatever you're on:
+# Pure-Go build (stub backend — useful for development/CI lint):
 make build
+
+# Real build with libusb (talks to the phone):
+make cgo
+
+# Cross-compile from WSL/Linux to Windows:
+make windows-cgo   # needs mingw-w64 + libusb headers under MINGW
+make windows       # stub-only build, no cgo
+
+# Per-platform variants:
+make linux-cgo darwin-cgo
 ```
 
-The Windows build does not yet require cgo — the libusb dependency is added in a later milestone (see roadmap).
+On Windows, install libusb via [vcpkg](https://vcpkg.io/) (`vcpkg install libusb:x64-windows`)
+or grab the prebuilt `iphone-mirror-windows` artifact from CI. The CI workflow
+in `.github/workflows/ci.yml` is the canonical reference for how to set up
+`PKG_CONFIG_PATH` and `CGO_LDFLAGS` for a Windows cgo build.
 
 ## Repository layout
 
