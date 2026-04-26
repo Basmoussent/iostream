@@ -16,8 +16,8 @@ func (devicesCmd) Summary() string { return "List connected iOS devices." }
 func (devicesCmd) Run(args []string, env Env) int {
 	fs := newFlagSet("devices", env)
 	jsonOut := fs.Bool("json", false, "emit machine-readable JSON instead of a table")
-	if err := fs.Parse(args); err != nil {
-		return 2
+	if cont, code := parseFlags(fs, args); !cont {
+		return code
 	}
 
 	devs, err := usb.NewBackend().Discover()

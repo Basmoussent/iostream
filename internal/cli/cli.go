@@ -28,6 +28,9 @@ type Command interface {
 func commands() []Command {
 	return []Command{
 		&devicesCmd{},
+		&activateCmd{},
+		&deactivateCmd{},
+		&streamCmd{},
 		&versionCmd{},
 	}
 }
@@ -78,4 +81,18 @@ func newFlagSet(name string, env Env) *flag.FlagSet {
 	fs := flag.NewFlagSet(name, flag.ContinueOnError)
 	fs.SetOutput(env.Stderr)
 	return fs
+}
+
+// parseFlags wraps fs.Parse so commands can return cleanly on -h (exit 0) and
+// on real parse errors (exit 2). The bool reports whether the caller should
+// continue running.
+func parseFlags(fs *flag.FlagSet, args []string) (cont bool, code int) {
+	switch err := fs.Parse(args); err {
+	case nil:
+		return true, 0
+	case flag.ErrHelp:
+		return false, 0
+	default:
+		return false, 2
+	}
 }
