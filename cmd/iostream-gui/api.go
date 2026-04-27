@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 
 	"github.com/Basmoussent/iostream/internal/driver"
 	"github.com/Basmoussent/iostream/internal/usb"
@@ -81,7 +84,11 @@ func launchStream(udid string) error {
 	if udid != "" {
 		args = append(args, "--udid", udid)
 	}
-	streamer := exec.Command("iostream", args...)
+	streamerPath, err := resolveSibling("iostream")
+	if err != nil {
+		return err
+	}
+	streamer := exec.Command(streamerPath, args...)
 	player := exec.Command("ffplay",
 		"-fflags", "nobuffer",
 		"-flags", "low_delay",
@@ -107,6 +114,24 @@ func launchStream(udid string) error {
 	go func() { _ = streamer.Wait() }()
 	go func() { _ = player.Wait() }()
 	return nil
+}
+
+// resolveSibling returns the absolute path of `name` if it lives next to the
+// running GUI binary, falling back to a regular PATH lookup. Go 1.19 stopped
+// resolving relative paths through exec.LookPath for security, so we have to
+// do this ourselves to make `iostream-gui.exe` find its sibling `iostream.exe`.
+func resolveSibling(name string) (string, error) {
+	exeName := name
+	if runtime.GOOS == "windows" && filepath.Ext(exeName) == "" {
+		exeName += ".exe"
+	}
+	if self, err := os.Executable(); err == nil {
+		candidate := filepath.Join(filepath.Dir(self), exeName)
+		if _, err := os.Stat(candidate); err == nil {
+			return candidate, nil
+		}
+	}
+	return exec.LookPath(name)
 }
 
 func writeJSON(w http.ResponseWriter, v interface{}) {
