@@ -14,3 +14,5 @@ require (
 	github.com/sirupsen/logrus v1.6.0 // indirect
 	golang.org/x/sys v0.0.0-20200909081042-eff7692f9009 // indirect
 )
+
+replace github.com/danielpaulus/quicktime_video_hack => github.com/Basmoussent/quicktime_video_hack v0.0.0-20260427112421-af6add014cc3

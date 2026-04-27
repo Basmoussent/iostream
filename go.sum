@@ -1,8 +1,8 @@
+github.com/Basmoussent/quicktime_video_hack v0.0.0-20260427112421-af6add014cc3 h1:sIr1hxbkAHK1s7BmrRD+6Y23QF4oHD4SSG7fhANNztU=
+github.com/Basmoussent/quicktime_video_hack v0.0.0-20260427112421-af6add014cc3/go.mod h1:2F3SNucTdnBU9gXlhpc5cglSr6VTyCnHO6r5I8GSdX8=
 github.com/Masterminds/semver v1.5.0/go.mod h1:MB6lktGJrhw8PrUyiEoblNEGEQ+RzHPF078ddwwvV3Y=
 github.com/danielpaulus/go-ios v1.0.13/go.mod h1:k+X7QB2ffFOhTkly/nNwvV1VIysif1MWS1s8GgYXpU4=
 github.com/danielpaulus/gst v0.0.0-20200201205042-e6d2974fceb8/go.mod h1:JbhjLST5AaUXpKQK65g9144BK8QHftbpuFoYuhDuONw=
-github.com/danielpaulus/quicktime_video_hack v0.0.0-20230504104950-d81396e2e775 h1:kJrMG7TuxJwLbY6mZBAWOFa3hjrj2/5Z85RQuk5FJyM=
-github.com/danielpaulus/quicktime_video_hack v0.0.0-20230504104950-d81396e2e775/go.mod h1:2F3SNucTdnBU9gXlhpc5cglSr6VTyCnHO6r5I8GSdX8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

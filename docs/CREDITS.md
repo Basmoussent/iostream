@@ -11,6 +11,10 @@ were inspired by, or used to learn the protocol from.
   activation, the message processor, and `coremedia.AVFileWriter` which
   emits H.264 in Annex-B framing. This dependency is what makes the project
   feasible without months of solo reverse engineering.
+  Patched via `go.mod replace` to a fork
+  (https://github.com/Basmoussent/quicktime_video_hack) — newer iPhones
+  (iPhone 14 / 15 / 16) renumbered the QuickTime USB subclass from 0x2A
+  to 0xFD; the fork carries the one-line constant change.
 - **github.com/google/gousb** — Apache-2.0 (transitive, via QVH)
   Cgo bindings around libusb-1.0.
 - **libusb-1.0** — LGPL-2.1 (system library, dynamically linked on cgo builds)
