@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -69,25 +70,35 @@ func handleSetupDriver(w http.ResponseWriter, _ *http.Request) {
 // decode raw H.264 NAL units anyway.
 func handleStream(w http.ResponseWriter, r *http.Request) {
 	udid := r.URL.Query().Get("udid")
-	if err := launchStream(udid); err != nil {
+	logPath, err := launchStream(udid)
+	if err != nil {
 		writeError(w, err)
 		return
 	}
-	writeJSON(w, map[string]string{"status": "started"})
+	writeJSON(w, map[string]string{
+		"status": "started",
+		"log":    logPath,
+	})
 }
 
-// launchStream wires `iostream stream` into ffplay via an OS pipe and returns
-// once both processes have started. Output is left on the parent's stderr so
-// failures show up in the GUI's terminal log.
-func launchStream(udid string) error {
+// launchStream wires `iostream stream` into ffplay via an OS pipe. It returns
+// the path of the log file we attach to both children's stderr so the
+// frontend can show the user where to look when something dies.
+func launchStream(udid string) (string, error) {
 	args := []string{"stream"}
 	if udid != "" {
 		args = append(args, "--udid", udid)
 	}
 	streamerPath, err := resolveSibling("iostream")
 	if err != nil {
-		return err
+		return "", err
 	}
+
+	logFile, err := openLogFile()
+	if err != nil {
+		return "", err
+	}
+
 	streamer := exec.Command(streamerPath, args...)
 	player := exec.Command("ffplay",
 		"-fflags", "nobuffer",
@@ -96,24 +107,45 @@ func launchStream(udid string) error {
 		"-i", "-",
 	)
 
+	streamer.Stderr = logFile
+	player.Stderr = logFile
+	hideConsole(streamer)
+	hideConsole(player)
+
 	pipe, err := streamer.StdoutPipe()
 	if err != nil {
-		return err
+		_ = logFile.Close()
+		return "", err
 	}
 	player.Stdin = pipe
 
 	if err := streamer.Start(); err != nil {
-		return err
+		_ = logFile.Close()
+		return "", fmt.Errorf("start iostream: %w", err)
 	}
 	if err := player.Start(); err != nil {
 		_ = streamer.Process.Kill()
-		return err
+		_ = logFile.Close()
+		return "", fmt.Errorf("start ffplay: %w", err)
 	}
-	// Reap children in the background so they don't turn into zombies. We do
-	// not wait on either: the user controls them via their own UI / Ctrl-C.
-	go func() { _ = streamer.Wait() }()
-	go func() { _ = player.Wait() }()
-	return nil
+	// Reap children in the background so they don't turn into zombies, and
+	// close the log file once the slower of the two has exited.
+	go func() {
+		_ = streamer.Wait()
+		_ = player.Wait()
+		_ = logFile.Close()
+	}()
+	return logFile.Name(), nil
+}
+
+// openLogFile creates a fresh log file under the user's temp dir for each
+// stream attempt. Caller owns the file; caller closes it.
+func openLogFile() (*os.File, error) {
+	dir := filepath.Join(os.TempDir(), "iostream")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return nil, err
+	}
+	return os.CreateTemp(dir, "stream-*.log")
 }
 
 // resolveSibling returns the absolute path of `name` if it lives next to the

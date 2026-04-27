@@ -71,8 +71,9 @@ $("#stream-btn").addEventListener("click", () => {
   const udid = $("#stream-udid").value.trim();
   const url = udid ? `/api/stream?udid=${encodeURIComponent(udid)}` : "/api/stream";
   withButton($("#stream-btn"), $("#stream-status"), "Starting ffplay…", async () => {
-    await callAPI(url);
-    setStatus($("#stream-status"), "Streaming — close the ffplay window to stop.", "ok");
+    const res = await callAPI(url);
+    const logHint = res.log ? ` Log: ${res.log}` : "";
+    setStatus($("#stream-status"), `Streaming — close the ffplay window to stop.${logHint}`, "ok");
   });
 });
 
